@@ -95,13 +95,17 @@ export default Ember.TextField.extend({
 
   // Unmask the value of the field and set the property. 
   setUnmaskedValue: function() {
-    this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
+    setTimeout(Ember.run.bind(this, function() {
+             this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
+     }), 20);
   }.observes('value'),
 
   // When the unmaskedValue changes, set the value.
   setValue: function() {
-    if(this.$().inputmask('unmaskedvalue') !== this.get('unmaskedValue')) {
-      this.$().val(this.get('unmaskedValue'));
-    }
+    setTimeout(Ember.run.bind(this, function() {
+      if(this.$().inputmask('unmaskedvalue') !== this.get('unmaskedValue')) {
+        this.$().val(this.get('unmaskedValue'));
+      }
+    }), 20);
   }.observes('unmaskedValue')
 });
