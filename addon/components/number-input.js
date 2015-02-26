@@ -10,6 +10,8 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  *   decimal - bool or int
  *     Makes the number a decimal with the specified
  *     precision, defaults to 2 if true.
+ *   allowMinus - boolean
+ *     Sets the allowMinus property (defaults to false)
  *   radix - string
  *     Sets the radix separator (defaults to period)
  *   separator - string
@@ -26,6 +28,7 @@ export default InputMaskComponent.extend({
   // Default options
   decimal:   false,
   group:     false,
+  allowMinus: false,
   separator: ',',
   radix:     '.',
   groupSize: '3',
@@ -34,6 +37,7 @@ export default InputMaskComponent.extend({
     this.setProperties({
       'options.autoGroup':      this.get('group'),
       'options.groupSeparator': this.get('separator'),
+      'options.allowMinus':     this.get('allowMinus'),
       'options.radixPoint':     this.get('radix'),
       'options.groupSize':      this.get('groupSize')
     });
