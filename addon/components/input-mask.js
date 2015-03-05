@@ -55,7 +55,7 @@ export default Ember.TextField.extend({
     this.$().inputmask(mask, options);
 
     // Initialize the unmasked value if it exists
-    if(this.get('unmaskedValue')) {
+    if(!Ember.isEmpty(this.get('unmaskedValue'))) {
       this.$().val(this.get('unmaskedValue'));
     }
     
@@ -96,16 +96,22 @@ export default Ember.TextField.extend({
   // Unmask the value of the field and set the property. 
   setUnmaskedValue: function() {
     setTimeout(Ember.run.bind(this, function() {
-             this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
-     }), 20);
+        if(this.$())
+        {
+          this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
+        }
+     }), 1);
   }.observes('value'),
 
   // When the unmaskedValue changes, set the value.
   setValue: function() {
     setTimeout(Ember.run.bind(this, function() {
-      if(this.$().inputmask('unmaskedvalue') !== this.get('unmaskedValue')) {
-        this.$().val(this.get('unmaskedValue'));
+      if(this.$())
+      {
+        if(this.$().inputmask('unmaskedvalue') !== this.get('unmaskedValue')) {
+          this.$().val(this.get('unmaskedValue'));
+        }
       }
-    }), 20);
+    }), 1);
   }.observes('unmaskedValue')
 });
