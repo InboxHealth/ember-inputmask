@@ -72,6 +72,7 @@ export default Ember.TextField.extend({
   // (See `decimal-input`), which is why the actual setting of the mask is handled
   // in another function.
   updateMask: function() {
+    var self = this;
     if (this.get('mask').toLowerCase() === 'regex') {
       // Regex has to capitalized for the plugin, but that's annoying
       // so let's just allow users to enter it however they want...
@@ -88,10 +89,15 @@ export default Ember.TextField.extend({
       'options.rightAlign':      this.get('rightAlign'),
       'options.clearIncomplete': this.get('clearIncomplete'),
       'options.greedy':          this.get('greedyMask'),
+      'options.oncleared': function(){ 
+        self.set('value', null); 
+      }
     });
+
 
     this.setMask();
   }.observes('mask', 'showMaskOnFocus', 'showMaskOnHover', 'rightAlign', 'clearIncomplete', 'greedyMask', 'pattern', 'regex'),
+
 
   // Unmask the value of the field and set the property. 
   setUnmaskedValue: function() {
