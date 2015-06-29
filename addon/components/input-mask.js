@@ -31,7 +31,7 @@ export default Ember.TextField.extend({
   rightAlign:      false,
   clearIncomplete: false,
   greedyMask:      false,
-  debounce:        1,
+  debounce:        5,
 
   // Strangely enough, if we initialize the options object on the component itself
   // it's shared between all instances of the object. Since we don't want that, and
@@ -120,7 +120,9 @@ export default Ember.TextField.extend({
 
   // Unmask the value of the field and set the property.
   setUnmaskedValue: function() {
-     this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
+    Ember.run.scheduleOnce('afterRender', this, function() {
+      this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
+    });
   }.observes('value'),
 
   // When the unmaskedValue changes, set the value.
