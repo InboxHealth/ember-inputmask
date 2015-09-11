@@ -18,7 +18,7 @@ var app = new EmberAddon();
 // please specify an object with the list of modules as keys
 // along with the exports of each module as its value.
 
-app.import('bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.min.js');
+app.import('bower_components/jquery.inputmask/dist/jquery.inputmask.bundle.js');
 
 var pickFiles = require('broccoli-static-compiler');
 var mergeTrees  = require('broccoli-merge-trees');
