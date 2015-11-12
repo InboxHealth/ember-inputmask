@@ -32,6 +32,7 @@ export default Ember.TextField.extend({
   clearIncomplete: false,
   greedyMask:      false,
   debounce:        5,
+  autofocus:    false,
 
   // Strangely enough, if we initialize the options object on the component itself
   // it's shared between all instances of the object. Since we don't want that, and
@@ -44,7 +45,14 @@ export default Ember.TextField.extend({
   // Initialize the mask by forcing a
   // call to the updateMask function
   didInsertElement: function() {
+    this._super.apply(this, arguments);
     this.propertyDidChange('mask');
+
+    Ember.run.scheduleOnce('afterRender', this, function(){
+      if(this.get('autofocus') === true) {
+       this.$().focus();
+      }
+     });
   },
 
   // Remove the mask from the input
