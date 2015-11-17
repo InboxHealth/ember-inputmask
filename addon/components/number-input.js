@@ -1,3 +1,4 @@
+import Ember from 'ember';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
 
 /**
@@ -50,5 +51,16 @@ export default InputMaskComponent.extend({
     }
 
     this._super();
-  }.observes('mask', 'group', 'decimal', 'separator', 'radix', 'groupSize')
+  },
+
+  _maskShouldChange: Ember.observer(
+    'mask',
+    'group',
+    'decimal',
+    'separator',
+    'radix',
+    'groupSize',
+    function() {
+      Ember.run.once(this, 'updateMask');
+  })
 });
