@@ -140,11 +140,11 @@ export default Ember.TextField.extend({
   },
 
   // Unmask the value of the field and set the property.
-  setUnmaskedValue: function() {
+  setUnmaskedValue: Ember.observer('value', function() {
     Ember.run.scheduleOnce('afterRender', this, function() {
       this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
     });
-  }.observes('value'),
+  }),
 
   // When the unmaskedValue changes, set the value.
   setValue: Ember.observer('unmaskedValue', function() {
