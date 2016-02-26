@@ -31,7 +31,7 @@ export default Ember.TextField.extend({
   rightAlign:      false,
   clearIncomplete: false,
   greedyMask:      false,
-  debounce:        0,
+  debounce:        5,
   autofocus:    false,
 
   // Strangely enough, if we initialize the options object on the component itself
@@ -136,6 +136,9 @@ export default Ember.TextField.extend({
 
     Ember.run.scheduleOnce('afterRender', this, function() {
       if (this.$().inputmask('unmaskedvalue') !== this.get('unmaskedValue')) {
+        if(this.get('update')){
+          this.get('update')(this.get('unmaskedValue'));
+        }
         this.$().val(this.get('unmaskedValue'));
       }
     });
