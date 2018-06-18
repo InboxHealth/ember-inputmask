@@ -6,7 +6,8 @@ const DEFAULT_OPTIONS = {
   groupSeparator: ',',
   radixPoint: '.',
   groupSize: '3',
-  autoGroup: true,
+  autoGroup: false,
+  allowMinus: false
 };
 
 export default OneWayInputMask.extend({
@@ -25,7 +26,7 @@ export default OneWayInputMask.extend({
   init() {
     this._super(...arguments);
 
-    set(this, '_options', Object.assign({}, get(this, '_options'), DEFAULT_OPTIONS));
+    set(this, '_options', Object.assign({}, DEFAULT_OPTIONS, get(this, '_options')));
 
     if (get(this, 'decimal')) {
       set(this, 'mask', 'decimal');
