@@ -29,6 +29,7 @@ export const DEFAULT_NON_BOUND_PROPS = [
  * @param {object} options The options to pass into the Inputmask library
  */
 const OneWayInputMask = Component.extend({
+  classNames: ['form-control', 'ember-text-field'],
   tagName: 'input',
 
   /**
@@ -85,7 +86,13 @@ const OneWayInputMask = Component.extend({
 
     // Give the mask some default options that can be overridden
     let options = get(this, 'options');
-    set(this, '_options', Object.assign({}, DEFAULT_OPTIONS, options));
+    let self = this;
+    let customObject = {
+      oncleared: function(){
+        self.set('value', null);
+      }
+    }
+    set(this, '_options', Object.assign(customObject, DEFAULT_OPTIONS, options));
 
     // We want any attribute that is not explicitally blacklisted to be bound that way we don't
     // have to whitelist every single html attribute that an `input` can have. Borrowed from
