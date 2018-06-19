@@ -88,10 +88,10 @@ const OneWayInputMask = Component.extend({
     let options = get(this, 'options');
     let self = this;
     let customObject = {
-      oncleared: function(){
-        self.set('value', null);
-      }
-    }
+      // oncleared: function(){
+      //   self.set('value', null);
+      // };
+    };
     set(this, '_options', Object.assign(customObject, DEFAULT_OPTIONS, options));
 
     // We want any attribute that is not explicitally blacklisted to be bound that way we don't
