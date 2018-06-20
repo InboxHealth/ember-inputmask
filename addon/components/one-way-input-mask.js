@@ -115,7 +115,7 @@ const OneWayInputMask = Component.extend({
     // `this.element` to exist. Fastboot doesn't work with `this.element` so we should only attempt
     // to do this if we know this hook has been called
     set(this, '_didInsertElement', true);
-    if(this.get('autofocus')){
+    if(get(this, 'autofocus')){
       schedule('afterRender', () => {
         try {
           this.element.focus();
