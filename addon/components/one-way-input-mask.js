@@ -117,7 +117,11 @@ const OneWayInputMask = Component.extend({
     set(this, '_didInsertElement', true);
     if(this.get('autofocus')){
       schedule('afterRender', () => {
-        this.element.focus();
+        try {
+          this.element.focus();
+        } catch(e) {
+          // no-op
+        }
       });
     }
   },
