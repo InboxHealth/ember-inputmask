@@ -184,8 +184,14 @@ const OneWayInputMask = Component.extend({
    * @param {string} value - The masked value visible in the element
    */
   _processNewValue(value) {
-    let cursorStart = this.element.selectionStart;
-    let cursorEnd = this.element.selectionEnd;
+    let cursorStart;
+    let cursorEnd;
+    try {
+      cursorStart = this.element.selectionStart;
+      cursorEnd = this.element.selectionEnd;
+    } catch(e) {
+      // no-op
+    }
     let unmaskedValue = this._getUnmaskedValue();
     let oldUnmaskedValue = get(this, '_value');
     let options = get(this, '_options');
@@ -202,7 +208,11 @@ const OneWayInputMask = Component.extend({
       // When the value is updated, and then sent back down the cursor moves to the end of the field.
       // We therefore need to put it back to where the user was typing so they don't get janked around
       schedule('afterRender', () => {
-        this.element.setSelectionRange(cursorStart, cursorEnd);
+        try {
+          this.element.setSelectionRange(cursorStart, cursorEnd);
+        } catch(e) {
+          // no-op
+        }
       });
     }
   },
