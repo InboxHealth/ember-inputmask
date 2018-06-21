@@ -118,7 +118,9 @@ const OneWayInputMask = Component.extend({
     if(get(this, 'autofocus')){
       schedule('afterRender', () => {
         try {
-          this.element.focus();
+          if(this.element){
+            this.element.focus();
+          }
         } catch(e) {
           // no-op
         }
@@ -217,10 +219,12 @@ const OneWayInputMask = Component.extend({
       // When the value is updated, and then sent back down the cursor moves to the end of the field.
       // We therefore need to put it back to where the user was typing so they don't get janked around
       schedule('afterRender', () => {
-        try {
-          this.element.setSelectionRange(cursorStart, cursorEnd);
-        } catch(e) {
-          // no-op
+        if(unmaskedValue !== ""){
+          try {
+            this.element.setSelectionRange(cursorStart, cursorEnd);
+          } catch(e) {
+            // no-op
+          }
         }
       });
     }
