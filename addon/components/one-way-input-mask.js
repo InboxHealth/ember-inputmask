@@ -129,6 +129,7 @@ const OneWayInputMask = Component.extend({
   },
 
   didReceiveAttrs() {
+    this._super(...arguments);
     let mask = get(this, 'mask');
     let oldMask = get(this, '_oldMask');
     let didMaskChange = mask !== oldMask;
