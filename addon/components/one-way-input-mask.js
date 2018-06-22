@@ -128,29 +128,31 @@ const OneWayInputMask = Component.extend({
     }
   },
 
-  didReceiveAttrs() {
-    this._super(...arguments);
-    let mask = get(this, 'mask');
-    let oldMask = get(this, '_oldMask');
-    let didMaskChange = mask !== oldMask;
-    let options = get(this, 'options');
-    let oldOptions = get(this, '_oldOptions');
-    let didOptionsChange = areDifferent(options, oldOptions);
-
-    if (didOptionsChange) {
-      // Override external options on top of internal options
-      set(this, '_options', Object.assign({}, get(this, '_options'), options));
-    }
-
-    // We want to reapply the mask if it has changed
-    if (didMaskChange || didOptionsChange) {
-      set(this, '_oldMask', mask);
-      set(this, '_oldOptions', options);
-      this._changeMask();
-    }
-  },
+  // disable for now as we do not need dynamic masks/options, we have them set on init
+  // didReceiveAttrs() {
+  //   this._super(...arguments);
+  //   let mask = get(this, 'mask');
+  //   let oldMask = get(this, '_oldMask');
+  //   let didMaskChange = mask !== oldMask;
+  //   let options = get(this, 'options');
+  //   let oldOptions = get(this, '_oldOptions');
+  //   let didOptionsChange = areDifferent(options, oldOptions);
+  //
+  //   if (didOptionsChange) {
+  //     // Override external options on top of internal options
+  //     set(this, '_options', Object.assign({}, get(this, '_options'), options));
+  //   }
+  //
+  //   // We want to reapply the mask if it has changed
+  //   if (didMaskChange || didOptionsChange) {
+  //     set(this, '_oldMask', mask);
+  //     set(this, '_oldOptions', options);
+  //     this._changeMask();
+  //   }
+  // },
 
   willDestroyElement() {
+    this._super(...arguments);
     this._destroyMask();
   },
 
