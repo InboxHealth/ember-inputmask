@@ -4,12 +4,7 @@
 const fastbootTransform = require('fastboot-transform');
 
 const filesToImport = [
-  'dependencyLibs/inputmask.dependencyLib.js',
-  'inputmask.js',
-  'inputmask.extensions.js',
-  'inputmask.date.extensions.js',
-  'inputmask.numeric.extensions.js',
-  'inputmask.phone.extensions.js'
+  'inputmask.min.js'
 ];
 
 module.exports = {
@@ -18,7 +13,7 @@ module.exports = {
     nodeAssets: {
       inputmask: () => ({
         vendor: {
-          include: filesToImport.map(file => `dist/inputmask/${file}`),
+          include: filesToImport.map(file => `dist/${file}`),
           processTree: input => fastbootTransform(input)
         }
       })
@@ -27,7 +22,7 @@ module.exports = {
   included() {
     this._super.included.apply(this, arguments);
     filesToImport.forEach(file => {
-      this.import(`vendor/inputmask/dist/inputmask/${file}`);
+      this.import(`vendor/inputmask/dist/${file}`);
     });
     this.import('vendor/shims/inputmask.js');
   }
