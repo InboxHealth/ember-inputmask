@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { observer } from '@ember/object';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
 
 /**
@@ -22,34 +22,34 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  *     Sets grouping (1,000 vs 1000) (defaults to false)
  */
 
-export default InputMaskComponent.extend({
-  mask: 'integer',
+export default class NumberInputComponent extends InputMaskComponent {
+  mask = 'integer';
 
   // Default options
-  decimal:   false,
-  group:     false,
-  allowMinus: false,
-  separator: ',',
-  radix:     '.',
-  groupSize: '3',
+  decimal = false;
+  group = false;
+  allowMinus = false;
+  separator = ',';
+  radix = '.';
+  groupSize = '3';
 
-  updateMask: function() {
-    this.setProperties({
-      'options.autoGroup':      this.get('group'),
-      'options.groupSeparator': this.get('separator'),
-      'options.allowMinus':     this.get('allowMinus'),
-      'options.radixPoint':     this.get('radix'),
-      'options.groupSize':      this.get('groupSize')
-    });
+  updateMask = observer(['mask', 'group', 'decimal', 'separator', 'radix', 'groupSize'], function () {
+    this.options = {
+      autoGroup: this.group,
+      groupSeparator: this.separator,
+      allowMinus: this.allowMinus,
+      radixPoint: this.radix,
+      groupSize: this.groupSize,
+    };
 
-    if (this.get('decimal') === true) {
-      this.set('mask', 'decimal');
-      this.set('options.digits', 2);
-    } else if (this.get('decimal')) {
-      this.set('mask', 'decimal');
-      this.set('options.digits', this.get('decimal'));
+    if (this.decimal === true) {
+      this.mask = 'decimal';
+      this.options.digits = 2;
+    } else if (this.decimal) {
+      this.mask = 'decimal';
+      this.options.digits = this.decimal;
     }
-    
+
     this._super();
-  }.observes('mask', 'group', 'decimal', 'separator', 'radix', 'groupSize')
-});
+  });
+}

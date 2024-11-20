@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { observer } from '@ember/object';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
 
 /**
@@ -14,18 +14,18 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  *     Allows users to optionally enter the full ZIP+4 area code.
  */
 
-export default InputMaskComponent.extend({
-  mask:    '99999',
+export default class ZipCodeInputComponent extends InputMaskComponent {
+  mask = '99999';
 
-  fullCode: false,
-  
-  updateMask: function() {
-    if (this.get('fullCode')) {
-      this.set('mask', '99999[-9999]');
+  fullCode = false;
+
+  updateMask = observer(['mask', 'fullCode'], function () {
+    if (this.fullCode) {
+      this.mask = '99999[-9999]';
     } else {
-      this.set('mask', '99999');
+      this.mask = '99999';
     }
 
     this._super();
-  }.observes('mask', 'fullCode')
-});
+  });
+}

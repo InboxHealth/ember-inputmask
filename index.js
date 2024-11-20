@@ -1,10 +1,10 @@
-/* jshint node: true */
 'use strict';
 
 module.exports = {
-  name: 'ember-inputmask',
-  included: function(app) {
+  name: require('./package').name,
+  included(app) {
     this._super.included(app);
-    app.import(app.bowerDirectory + '/jquery.inputmask/dist/jquery.inputmask.bundle.min.js');
-  }
+
+    this.import('node_modules/jquery.inputmask/dist/jquery.inputmask.bundle.js');
+  },
 };

@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
 
 /**
@@ -7,6 +6,6 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  * Displays an input that masks to currency
  */
 
-export default InputMaskComponent.extend({
-  mask: 'currency'
-});
+export default class CurrencyInputComponent extends InputMaskComponent {
+  mask = 'currency';
+}

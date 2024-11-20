@@ -1,5 +1,5 @@
-import Ember from 'ember';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
+import { observer } from '@ember/object';
 
 /**
  * `{{credit-card-input}}` component.
@@ -8,17 +8,18 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  *
  * Currently Supports: Visa, MasterCard, Amex, Diners Club, Discover, JCB
  *
- * FUTURE: 
+ * FUTURE:
  *   - Add support for more cards
  *   - Add validation for full card numbers
  */
 
-export default InputMaskComponent.extend({
-  updateMask: function() {
-    var cardType  = this.get('cardType'),
-        s         = this.get('separator') || '-', // s for separator for convenience
-        mask;                                     // Also, we put the default in here instead
-                                                  // of defining it on the model
+export default class CreditCardInputComponent extends InputMaskComponent {
+  updateMask = observer(['mask', 'cardType', 'separator'], function () {
+    const cardType = this.cardType;
+    // s for separator for convenience
+    const s = this.separator || '-';
+    // Also, we put the default in here instead of defining it on the model
+    let mask;
 
     if (cardType === 'American Express') {
       mask = '9999' + s + '9999999' + s + '9999';
@@ -28,15 +29,16 @@ export default InputMaskComponent.extend({
       mask = '9999' + s + '9999' + s + '9999' + s + '9999';
     }
 
-    if (this.get('mask') !== mask) {
-      this.set('mask', mask);
+    if (this.mask !== mask) {
+      this.mask = mask;
     }
-    this._super();
-  }.observes('mask', 'cardType', 'separator'),
 
-  updateCardType: function() {
-    var unmaskedValue = this.get('unmaskedValue') || '', 
-        cardType;
+    this._super();
+  });
+
+  updateCardType = observer('unmaskedValue', function () {
+    const unmaskedValue = this.unmaskedValue || '';
+    let cardType;
 
     if (unmaskedValue.match(/^4/)) {
       cardType = 'Visa';
@@ -54,6 +56,6 @@ export default InputMaskComponent.extend({
       cardType = 'Other';
     }
 
-    this.set('cardType', cardType);
-  }.observes('unmaskedValue')
-});
+    this.cardType = cardType;
+  });
+}

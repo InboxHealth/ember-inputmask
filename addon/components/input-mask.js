@@ -1,4 +1,9 @@
-import Ember from 'ember';
+import { on } from '@ember/object/evented';
+import { observer } from '@ember/object';
+import TextField from '@ember/component/text-field';
+import { tracked } from '@glimmer/tracking';
+import { isEmpty } from '@ember/utils';
+import { bind } from '@ember/runloop';
 
 /**
  * `{{input-mask}}` component.
@@ -19,105 +24,123 @@ import Ember from 'ember';
  *     Shows optional parts of a mask in preview when true
  */
 
-export default Ember.TextField.extend({
-  mask: '',
+export default class InputMaskComponent extends TextField {
+  @tracked mask = '';
 
-  showMaskOnFocus: true,
-  showMaskOnHover: true,
-  rightAlign:      false,
-  clearIncomplete: false,
-  greedyMask:      false,
+  showMaskOnFocus = true;
+  showMaskOnHover = true;
+  rightAlign = false;
+  clearIncomplete = false;
+  greedyMask = false;
 
-  // Strangely enough, if we initialize the options object on the component itself
-  // it's shared between all instances of the object. Since we don't want that, and
-  // we do want to store options somewhere, we need to initialize an options object
-  // whenever we create an `input-mask`.
-  initializeOptions: function() {
-    this.set('options', {});
-  }.on('init'),
-  
-  // Initialize the mask by forcing a
-  // call to the updateMask function
-  didInsertElement: function() {
-    this.propertyDidChange('mask');
-  },
+  // Strangely enough, if we initialize the options object on the component itself it's shared between all instances of the object. Since we don't want that, and we do want to store options somewhere, we need to initialize an options object whenever we create an `input-mask`.
+  initializeOptions = on('init', function () {
+    this.options = {};
+  });
+
+  // Initialize the mask by forcing a call to the updateMask function
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+  }
 
   // Remove the mask from the input
-  teardownMask: function() {
-    this.$().inputmask('remove');
-  }.on('willDestroyElement'),
+  teardownMask = on('willDestroyElement', function () {
+    let inputElement = this.element.querySelector('input');
 
-  setMask: function() {
-    var mask    = this.get('mask'),
-        options = this.get('options');
+    if (inputElement && inputElement.inputmask) {
+      inputElement.inputmask.remove();
+    }
+  });
 
-    this.$().inputmask('remove');
-    this.$().inputmask(mask, options);
+  setMask() {
+    var mask = this.mask;
+    var options = this.options;
+
+    let inputElement = this.element.querySelector('input');
+
+    if (inputElement && inputElement.inputmask) {
+      inputElement.inputmask.remove();
+      inputElement.inputmask(mask, options).mask(inputElement);
+    }
 
     // Initialize the unmasked value if it exists
-    if(!Ember.isEmpty(this.get('unmaskedValue'))) {
-      this.$().val(this.get('unmaskedValue'));
-    }
-    
-    // If the mask has changed, we need to refocus the input to show the
-    // proper mask preview. Since the caret is not positioned by the focus
-    // even, but the click event, we need to trigger a click as well.
-    if(this.$().is(':focus')) {
-      this.$().blur().focus().click();
-    }
-  },
-
-  // Update the mask whenever the mask itself changes or one of the options changes.
-  // This observer is meant to be extensible so that other fields can add options
-  // (See `decimal-input`), which is why the actual setting of the mask is handled
-  // in another function.
-  updateMask: function() {
-    var self = this;
-    if (this.get('mask').toLowerCase() === 'regex') {
-      // Regex has to capitalized for the plugin, but that's annoying
-      // so let's just allow users to enter it however they want...
-      this.set('mask', 'Regex');
-
-      // Note: I like pattern better, but I'll leave regex in as an option
-      // as well since that's what the plugin defines on the options hash
-      this.set('options.regex', this.get('pattern') || this.get('regex'));
+    if (!isEmpty(this.unmaskedValue)) {
+      inputElement.value = this.unmaskedValue;
     }
 
-    this.setProperties({
-      'options.showMaskOnFocus': this.get('showMaskOnFocus'),
-      'options.showMaskOnHover': this.get('showMaskOnHover'),
-      'options.rightAlign':      this.get('rightAlign'),
-      'options.clearIncomplete': this.get('clearIncomplete'),
-      'options.greedy':          this.get('greedyMask'),
-      'options.oncleared': function(){ 
-        self.set('value', null); 
+    // If the mask has changed, we need to refocus the input to show the proper mask preview. Since the caret is not positioned by the focus even, but the click event, we need to trigger a click as well.
+    if (document.activeElement === inputElement) {
+      inputElement.blur();
+      inputElement.focus();
+      inputElement.click();
+    }
+  }
+
+  // Update the mask whenever the mask itself changes or one of the options changes. This observer is meant to be extensible so that other fields can add options (See `decimal-input`), which is why the actual setting of the mask is handled in another function.
+  updateMask = observer(
+    'mask',
+    'showMaskOnFocus',
+    'showMaskOnHover',
+    'rightAlign',
+    'clearIncomplete',
+    'greedyMask',
+    'pattern',
+    'regex',
+    function () {
+      var self = this;
+
+      if (this.mask.toLowerCase() === 'regex') {
+        // Regex has to capitalized for the plugin, but that's annoying so let's just allow users to enter it however they want...
+        this.mask = 'Regex';
+
+        // Note: I like pattern better, but I'll leave regex in as an option as well since that's what the plugin defines on the options hash
+        this.options.regex = this.pattern || this.regex;
       }
-    });
 
+      this.options = {
+        ...this.options,
+        showMaskOnFocus: this.showMaskOnFocus,
+        showMaskOnHover: this.showMaskOnHover,
+        rightAlign: this.rightAlign,
+        clearIncomplete: this.clearIncomplete,
+        greedy: this.greedyMask,
+        oncleared: function () {
+          self.set('value', null);
+        },
+      };
 
-    this.setMask();
-  }.observes('mask', 'showMaskOnFocus', 'showMaskOnHover', 'rightAlign', 'clearIncomplete', 'greedyMask', 'pattern', 'regex'),
+      this.setMask();
+    }
+  );
 
+  // Unmask the value of the field and set the property.
+  setUnmaskedValue = observer('value', function () {
+    setTimeout(
+      bind(this, function () {
+        let inputElement = this.element.querySelector('input');
 
-  // Unmask the value of the field and set the property. 
-  setUnmaskedValue: function() {
-    setTimeout(Ember.run.bind(this, function() {
-        if(!Ember.isEmpty(this.$()))
-        {
-          this.set('unmaskedValue', this.$().inputmask('unmaskedvalue'));
+        if (!isEmpty(inputElement)) {
+          this.unmaskedValue = inputElement.inputmask.unmaskedvalue();
         }
-     }), 1);
-  }.observes('value'),
+      }),
+      1
+    );
+  });
 
   // When the unmaskedValue changes, set the value.
-  setValue: function() {
-    setTimeout(Ember.run.bind(this, function() {
-      if(!Ember.isEmpty(this.$()))
-      {
-        if(this.$().inputmask('unmaskedvalue') !== this.get('unmaskedValue')) {
-          this.$().val(this.get('unmaskedValue'));
+  setValue = observer('unmaskedValue', function () {
+    setTimeout(
+      bind(this, function () {
+        let inputElement = this.element.querySelector('input');
+
+        if (!isEmpty(inputElement)) {
+          if (inputElement.inputmask.unmaskedvalue() !== this.unmaskedValue) {
+            inputElement.value = this.unmaskedValue;
+            // this.$().val(this.unmaskedValue);
+          }
         }
-      }
-    }), 1);
-  }.observes('unmaskedValue')
-});
+      }),
+      1
+    );
+  });
+}

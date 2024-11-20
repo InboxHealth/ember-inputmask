@@ -1,4 +1,3 @@
-import Ember from 'ember';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
 
 /**
@@ -7,6 +6,6 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  * Displays an input that masks email addresses.
  */
 
-export default InputMaskComponent.extend({
-  mask: 'email'
-});
+export default class EmailInputComponent extends InputMaskComponent {
+  mask = 'email';
+}

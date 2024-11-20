@@ -1,4 +1,4 @@
-import Ember from 'ember';
+import { observer } from '@ember/object';
 import InputMaskComponent from 'ember-inputmask/components/input-mask';
 
 /**
@@ -15,14 +15,14 @@ import InputMaskComponent from 'ember-inputmask/components/input-mask';
  *     Allows optional extensions to be added to numbers
  */
 
-export default InputMaskComponent.extend({
-  mask:    '(999) 999-9999',
-  
-  updateMask: function() {
-    if (this.get('extensions')) {
-      this.set('mask', '(999) 999-9999[ x 9{1,4}]');
+export default class PhoneNumberInputComponent extends InputMaskComponent {
+  mask = '(999) 999-9999';
+
+  updateMask = observer(['mask', 'extensions'], function () {
+    if (this.extensions) {
+      this.mask = '(999) 999-9999[ x 9{1,4}]';
     }
 
     this._super();
-  }.observes('mask', 'extensions')
-});
+  });
+}
