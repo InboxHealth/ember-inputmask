@@ -1,13 +1,13 @@
 {
   "name": "ember-inputmask",
-  "version": "0.0.0",
+  "version": "3.0.1",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
   ],
-  "repository": "",
+  "repository": "https://github.com/InboxHealth/ember-inputmask",
   "license": "MIT",
-  "author": "",
+  "author": "Richard Stovall <richard.stovall@inboxhealth.com",
   "directories": {
     "doc": "doc",
     "test": "tests"
